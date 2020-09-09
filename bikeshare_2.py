@@ -5,6 +5,7 @@ import streamlit as st
 from datetime import datetime, timedelta
 
 
+
 st.write("""
 # BIKE SHARE PROJECT
 """)
@@ -51,7 +52,6 @@ def get_filters():
     
     
 
-@st.cache(suppress_st_warning=True)
 def load_data(city, month, day):
     """
     Loads data for the specified city and filters by month and day if applicable.
@@ -68,31 +68,30 @@ def load_data(city, month, day):
     df = pd.read_csv(CITY_DATA[city.lower()])
     # convert the Start Time column to datetime
     df['Start Time'] = pd.to_datetime(df['Start Time'])
-
-    # extract month and day of week from Start Time to create new columns
-    df['month'] = df['Start Time'].dt.month
-  
-    df['day_of_week'] =  df['Start Time'].dt.strftime("%A")
     
-
+    
+    # extract month and day of week from Start Time to create new columns
+    df['month'] = df['Start Time'].dt.month_name()
+    
+    df['day_of_week'] = df['Start Time'].dt.day_name()
+    
+    
+  
 
     # filter by month if applicable
     if month.title() != 'All':
         # use the index of the months list to get the corresponding int
-        month = months.index(month) + 1
+        month_number = months.index(month) + 1
         
-    
+        
         # filter by month to create the new dataframe
-        df = df[df['month'] == month]
+        df = df[df['month'] == month.title()]
+    
         
-        
-
     # filter by day of week if applicable
     if day.title() != 'All':
         # filter by day of week to create the new dataframe
         df = df[df['day_of_week'] == day.title()]
-
-
 
     return df
 
@@ -105,26 +104,27 @@ def time_stats(df):
 
     # display the most common month
     popular_month = df['month'].mode()[0]
-    st.write(f'The Most Common Month: **{months[popular_month-1]}**')
+    st.write(f'The Most Common Month: **{popular_month}**')
 
 
     # display the most common day of week
+    
     popular_day = df['day_of_week'].mode()[0]
     st.write(f'The Most Common Day of the week: **{popular_day}**' )
 
 
     # extract hour from the Start Time column to create an hour column
-    df2 = df.assign(hour = df['Start Time'].dt.strftime("%I,%p"))
+    
+    df['hour'] =  df['Start Time'].dt.strftime("%I %p")
+    
     # display the most common start hour
-    popular_hour = df2['hour'].mode()[0]
-    st.write(f'The Most Common Start Hour: **{popular_hour}**')
-
-
-    return df2
+    popular_hour = df['hour'].mode()[0]
+    st.write(f'The Most Common Start Hour: **{(popular_hour)}**')
 
     
+    return df
 
-
+    
     # print("\nThis took %s seconds." % (time.time() - start_time))
     
 
@@ -146,10 +146,10 @@ def station_stats(df):
 
 
     # display most frequent combination of start station and end station trip
-    start_end_group = df.groupby(['Start Station', 'End Station']) 
-    popular_start_end = start_end_group.size().sort_values(ascending=False).head(1)
-    st.write('Most Frequent Combination Of Start Station And End Station Trip:')
-    st.table(popular_start_end)
+    df['Start End Station'] = ' From ' + df['Start Station'] + ' to ' + df['End Station']
+    popular_start_end = df['Start End Station'].mode()[0]
+    st.write('Most Frequent Combination Of Start Station And End Station Trip is:', f'**{popular_start_end}**')
+    
 
 
 
@@ -164,27 +164,33 @@ def trip_duration_stats(df, month):
 
     # display total travel time
     total_travel_time = timedelta(seconds= int(df['Trip Duration'].sum()))
+    totaltt = df['Trip Duration'].sum()
     t_days = total_travel_time.days
     t_seconds = total_travel_time.seconds
     t_hours = t_seconds//3600
     t_minutes = (t_seconds//60)%60
     t_seconds = t_seconds%60
     if month.title() != 'All':
-        st.write(f'Total Travel Time for 2017 through {month}: **{t_days} days {t_hours} hours {t_minutes} minutes {t_seconds} seconds**', )
+        st.write(f'Total Travel Time for {month}: **{t_days} days {t_hours} hours {t_minutes} minutes {t_seconds} seconds**', )
+        st.write(totaltt//360)
     else:
-        st.write(f'Total Travel Time for 2017 through the months of January to June: **{t_days} days {t_hours} hours {t_minutes} minutes {t_seconds} seconds**', )
+        st.write(f'Total Travel Time  for the months of January to June: **{t_days} days {t_hours} hours {t_minutes} minutes {t_seconds} seconds**', )
+        st.write(totaltt//360)
 
     # display mean travel time
     mean_travel_time = timedelta(seconds=df['Trip Duration'].mean())
+    meantt = df['Trip Duration'].mean()
     m_days = mean_travel_time.days
     m_seconds = mean_travel_time.seconds
-    m_hours = t_seconds//3600
+    m_hours = m_seconds//3600
     m_minutes = (m_seconds//60)%60
     m_seconds = m_seconds%60
     if month.title() != 'All':
-        st.write(f'Average Travel Time for 2017 through {month}: **{m_days} days {m_hours} hours {m_minutes} minutes {m_seconds} seconds**', )
+        st.write(f'Average Travel Time for {month}: **{m_days} days {m_hours} hours {m_minutes} minutes {m_seconds} seconds**', )
+        st.write(meantt)
     else:
-        st.write(f'Average Travel Time for 2017 through the months of January to June: **{m_days} days {m_hours} hours {m_minutes} minutes {m_seconds} seconds**', )
+        st.write(f'Average Travel Time  for the months of January to June: **{m_days} days {m_hours} hours {m_minutes} minutes {m_seconds} seconds**', )
+        st.write(f'**{np.ceil(meantt)}** in Hours')
 
     # print("\nThis took %s seconds." % (time.time() - start_time))
     
@@ -199,15 +205,18 @@ def user_stats(df, city):
     st.write('User Type Stats:')
     st.table(df['User Type'].value_counts())
     
-
-    if city != 'Washington':
+    
+    if "Gender" in df:
         # Display counts of gender
         st.write('\nGender Stats:')
         st.table(df['Gender'].value_counts())
+    else:
+        st.success("No Gender Data To Show")
         
 
 
         # Display earliest, most recent, and most common year of birth
+    if 'Birth Year' in df:
         earliest_year = int(df['Birth Year'].min())
         st.write(f'Earliest Year Of Birth: **{earliest_year}**')
                 
@@ -246,18 +255,18 @@ def main():
     city, month, day = get_filters()
     progress_bar = st.sidebar.progress(0)
     status_text = st.sidebar.text("0% Complete")
-    
+    st.write()
     
 
     try:
         
         df = load_data(city, month, day)
-
-        df2 = time_stats(df)
+        
+        df = time_stats(df)
         station_stats(df)
         trip_duration_stats(df, month)
         user_stats(df, city)
-        produce_raw_data(df2)
+        produce_raw_data(df)
 
         for i in range(1, 11):
             status_text.text("%i%% Complete" % (i*10))
