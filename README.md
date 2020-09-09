@@ -19,9 +19,9 @@ Link to the live app [BIKESHARE UDACITY APP](https://bikeshare-udacity-app.herok
 
 
 #### Resources
-How to Build Your First Data Science Web App in Python (Streamlit Tutorial Part 1) - https://www.youtube.com/watch?v=ZZ4B0QUHuNc
-How to Build Your First Data Science Web App in Python (Streamlit Tutorial Part 2) - https://www.youtube.com/watch?v=8M20LyCZDOY&t=327s
-Streamlit Documentation - https://docs.streamlit.io/en/stable/
+-How to Build Your First Data Science Web App in Python (Streamlit Tutorial Part 1) - https://www.youtube.com/watch?v=ZZ4B0QUHuNc
+-How to Build Your First Data Science Web App in Python (Streamlit Tutorial Part 2) - https://www.youtube.com/watch?v=8M20LyCZDOY&t=327s
+-Streamlit Documentation - https://docs.streamlit.io/en/stable/
 
 
 Screenshot of app
