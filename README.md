@@ -17,11 +17,14 @@ Link to the live app [BIKESHARE UDACITY APP](https://bikeshare-udacity-app.herok
 
 3. Once the data is generated, you can adjust the slider on the sidebar on the left to view the raw data.
 
+<<<<<<< HEAD
 
 ####Resources
 How to Build Your First Data Science Web App in Python (Streamlit Tutorial Part 1) - https://www.youtube.com/watch?v=ZZ4B0QUHuNc
 How to Build Your First Data Science Web App in Python (Streamlit Tutorial Part 2) - https://www.youtube.com/watch?v=8M20LyCZDOY&t=327s
 Streamlit Documentation - https://docs.streamlit.io/en/stable/
+=======
+>>>>>>> origin/master
 Screenshot of app
 ![Screenshot (93)](https://user-images.githubusercontent.com/44923453/92548726-ad2d8080-f24f-11ea-8216-7f3012861ea1.png)
 
