@@ -1,8 +1,4 @@
-# BIKESHARE-UDACITY-APP
-Udacity Bikeshare captsone project with streamlit
-
-Bikeshare-udacity-app
-Udacity Bikeshare captsone project with streamlit
+# BIKESHARE-APP
 
 In this project, I used streamlite a framework used to build web apps.
 
